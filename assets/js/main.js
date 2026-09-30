@@ -1,5 +1,5 @@
 import { CONFIG } from './config.js';
-import { el, clear, safeHref, pad2 } from './lib/dom.js';
+import { el, clear, safeHref } from './lib/dom.js';
 import { pluralRu } from './lib/format.js';
 import {
   reveal,

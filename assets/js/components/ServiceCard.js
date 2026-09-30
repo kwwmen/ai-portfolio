@@ -1,14 +1,12 @@
-import { el, pad2 } from '../lib/dom.js';
+import { el } from '../lib/dom.js';
 
 /**
  * Карточка услуги.
- * @param {object} s      — запись из services.json
- * @param {number} index  — порядковый номер для подписи 01, 02, ...
+ * @param {object} s — запись из services.json
  */
-export function ServiceCard(s, index = 0) {
+export function ServiceCard(s) {
   const card = el('article', 'service');
 
-  card.appendChild(el('p', 'service__index', pad2(index + 1)));
   card.appendChild(el('h3', 'service__title', s.title));
   card.appendChild(el('p', 'service__desc', s.description));
 

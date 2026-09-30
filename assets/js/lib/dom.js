@@ -51,8 +51,3 @@ export function fadeInImage(img) {
   img.addEventListener('load', done, { once: true });
   img.addEventListener('error', done, { once: true });
 }
-
-/** Двузначный номер: 1 → «01» */
-export function pad2(n) {
-  return String(n).padStart(2, '0');
-}

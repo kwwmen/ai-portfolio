@@ -1,27 +1,29 @@
-import { el, clear, fadeInImage, pad2 } from '../lib/dom.js';
-import { resolveImage } from '../lib/media.js';
+import { el, clear } from '../lib/dom.js';
 import { YouTubeEmbed } from './YouTubeEmbed.js';
-
-let closeButton = null;
 
 /**
  * Модальное окно кейса.
- * @param {HTMLElement}  modalEl
- * @param {object[]}     testimonials
- * @param {object}       lightbox
- * @param {object}       galleryFactory — функция Gallery(photos, lightbox)
+ * Номер кейса не выводится — вместо него строка с составом работы.
+ *
+ * @param {HTMLElement} modalEl
+ * @param {object[]}    testimonials
+ * @param {object}      lightbox
+ * @param {Function}    galleryFactory
  */
 export function CaseModal(modalEl, testimonials, lightbox, galleryFactory) {
   if (!modalEl) return { open() {}, close() {} };
 
-  function open(caseData) {
+  let lastFocused = null;
+
+  function open(caseData, trigger) {
+    lastFocused = trigger || document.activeElement;
+
     clear(modalEl);
     modalEl.appendChild(buildPanel(caseData));
     modalEl.removeAttribute('hidden');
     document.body.style.overflow = 'hidden';
 
-    closeButton = modalEl.querySelector('.modal__close');
-    closeButton?.focus();
+    modalEl.querySelector('.modal__close')?.focus();
   }
 
   function close() {
@@ -31,19 +33,10 @@ export function CaseModal(modalEl, testimonials, lightbox, galleryFactory) {
     lastFocused?.focus?.();
   }
 
-  let lastFocused = null;
-
-  function openWithReturn(caseData, trigger) {
-    lastFocused = trigger || document.activeElement;
-    open(caseData);
-  }
-
-  /* Клик по затемнению — закрыть */
   modalEl.addEventListener('click', e => {
     if (e.target === modalEl) close();
   });
 
-  /* Escape — закрыть сначала lightbox, потом модалку */
   document.addEventListener('keydown', e => {
     if (e.key !== 'Escape') return;
 
@@ -54,7 +47,7 @@ export function CaseModal(modalEl, testimonials, lightbox, galleryFactory) {
     if (!modalEl.hasAttribute('hidden')) close();
   });
 
-  /* Удержание фокуса внутри модального окна */
+  /* Фокус не выходит за пределы окна */
   modalEl.addEventListener('keydown', e => {
     if (e.key !== 'Tab') return;
 
@@ -91,20 +84,27 @@ export function CaseModal(modalEl, testimonials, lightbox, galleryFactory) {
     closeBtn.addEventListener('click', close);
     panel.appendChild(closeBtn);
 
-    panel.appendChild(el('p', 'modal__number', `Кейс ${pad2(c.number)}`));
+    /* Состав работы вместо номера кейса */
+    const parts = [];
+    if (c.video) parts.push('Видео');
+    if (Array.isArray(c.photos) && c.photos.length > 0) {
+      parts.push(`${c.photos.length} фото`);
+    }
+    if (c.price) parts.push(c.price);
+
+    if (parts.length > 0) {
+      panel.appendChild(el('p', 'modal__number', parts.join(' · ')));
+    }
 
     const h2 = el('h2', 'modal__title', c.title);
-    h2.id = `case-title-${c.id}`;
     panel.appendChild(h2);
 
-    /* Видео */
     if (c.video) {
       const media = el('div', 'modal__media');
       media.appendChild(YouTubeEmbed(c.video, c.title));
       panel.appendChild(media);
     }
 
-    /* Задача */
     if (c.task) {
       const block = el('div', 'modal__block');
       block.appendChild(el('p', 'modal__label', 'Задача'));
@@ -112,17 +112,15 @@ export function CaseModal(modalEl, testimonials, lightbox, galleryFactory) {
       panel.appendChild(block);
     }
 
-    /* Что сделали */
     if (Array.isArray(c.actions) && c.actions.length > 0) {
       const block = el('div', 'modal__block');
-      block.appendChild(el('p', 'modal__label', 'Что сделали'));
+      block.appendChild(el('p', 'modal__label', 'Что сделал'));
       const list = el('ol', 'modal__list');
       c.actions.forEach(a => list.appendChild(el('li', null, a)));
       block.appendChild(list);
       panel.appendChild(block);
     }
 
-    /* Результат */
     if (c.result) {
       const block = el('div', 'modal__block');
       block.appendChild(el('p', 'modal__label', 'Результат'));
@@ -130,15 +128,6 @@ export function CaseModal(modalEl, testimonials, lightbox, galleryFactory) {
       panel.appendChild(block);
     }
 
-    /* Стоимость */
-    if (c.price) {
-      const block = el('div', 'modal__block');
-      block.appendChild(el('p', 'modal__label', 'Стоимость'));
-      block.appendChild(el('span', 'modal__price', c.price));
-      panel.appendChild(block);
-    }
-
-    /* Фотографии */
     if (Array.isArray(c.photos) && c.photos.length > 0 && galleryFactory) {
       const block = el('div', 'modal__block');
       block.appendChild(el('p', 'modal__label', 'Фотографии'));
@@ -146,7 +135,6 @@ export function CaseModal(modalEl, testimonials, lightbox, galleryFactory) {
       panel.appendChild(block);
     }
 
-    /* Отзыв */
     if (c.testimonialId) {
       const t = testimonials.find(x => x.id === c.testimonialId);
       if (t) {
@@ -156,9 +144,11 @@ export function CaseModal(modalEl, testimonials, lightbox, galleryFactory) {
         const box = el('div', 'modal__testimonial');
         box.appendChild(el('p', 'modal__testimonial-quote', `«${t.quote}»`));
 
-        const author = el('p', 'modal__testimonial-author');
-        author.textContent = t.role ? `${t.author} — ${t.role}` : t.author;
-        box.appendChild(author);
+        if (t.author) {
+          const author = el('p', 'modal__testimonial-author');
+          author.textContent = t.role ? `${t.author} — ${t.role}` : t.author;
+          box.appendChild(author);
+        }
 
         block.appendChild(box);
         panel.appendChild(block);
@@ -168,5 +158,5 @@ export function CaseModal(modalEl, testimonials, lightbox, galleryFactory) {
     return panel;
   }
 
-  return { open: openWithReturn, close };
+  return { open, close };
 }
