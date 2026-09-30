@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>kwwmen — AI-анимация фотографий</title>
+<meta name="description" content="Меньшиков Фёдор — нейросетевая анимация фотографий. Превращаю фото в видео с помощью AI.">
+
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+
+<link rel="preload" href="assets/css/tokens.css" as="style">
+<link rel="stylesheet" href="assets/css/tokens.css">
+<link rel="stylesheet" href="assets/css/base.css">
+<link rel="stylesheet" href="assets/css/layout.css">
+<link rel="stylesheet" href="assets/css/components.css">
+
+<meta property="og:type"        content="website">
+<meta property="og:title"       content="kwwmen — AI-анимация фотографий">
+<meta property="og:description" content="Нейросетевая анимация фотографий. Превращаю фото в видео.">
+<meta property="og:image"       content="assets/img/og-cover.jpg">
+
+<script type="module" src="assets/js/main.js"></script>
+</head>
+<body>
+
+<a href="#main" class="visually-hidden">Перейти к содержимому</a>
+
+<header class="site-header">
+  <div class="container site-header__inner">
+    <a href="#" class="site-header__brand" data-site="brand">kwwmen</a>
+    <nav class="site-nav" data-site="nav" aria-label="Основная навигация"></nav>
+  </div>
+</header>
+
+<main id="main">
+
+  <section class="hero" aria-label="Заголовок">
+    <div class="container">
+      <p class="hero__eyebrow" data-site="heroEyebrow"></p>
+      <h1 class="hero__title" data-site="heroTitle"></h1>
+      <p class="hero__lead" data-site="heroLead"></p>
+    </div>
+  </section>
+
+  <section class="section" id="cases" aria-labelledby="cases-title">
+    <div class="container">
+      <div class="section__head">
+        <h2 class="section__title" id="cases-title">Кейсы</h2>
+        <span class="section__index" data-count="cases" aria-live="polite"></span>
+      </div>
+      <div class="case-grid" id="case-grid" role="list"></div>
+    </div>
+  </section>
+
+  <section class="section" id="services" aria-labelledby="services-title">
+    <div class="container">
+      <div class="section__head">
+        <h2 class="section__title" id="services-title">Услуги</h2>
+        <span class="section__index" data-count="services"></span>
+      </div>
+      <div class="service-grid" id="service-grid"></div>
+    </div>
+  </section>
+
+  <section class="section" id="testimonials" aria-labelledby="testimonials-title">
+    <div class="container">
+      <div class="section__head">
+        <h2 class="section__title" id="testimonials-title">Отзывы</h2>
+        <span class="section__index" data-count="testimonials"></span>
+      </div>
+      <div class="testimonial-grid" id="testimonial-grid"></div>
+    </div>
+  </section>
+
+  <section class="section" id="contact" aria-labelledby="contact-title">
+    <div class="container">
+      <div class="section__head">
+        <h2 class="section__title" id="contact-title">Контакты</h2>
+      </div>
+      <div id="contact-body"></div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="container" data-site="footer"></div>
+</footer>
+
+<!-- Модальное окно кейса -->
+<div class="modal" id="case-modal" hidden role="dialog" aria-modal="true"></div>
+
+<!-- Lightbox для фотографий -->
+<div class="lightbox" id="lightbox" hidden role="dialog" aria-modal="true"></div>
+
+</body>
+</html>

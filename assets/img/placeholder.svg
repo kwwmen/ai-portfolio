@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360">
+  <rect width="640" height="360" fill="#F8F8F7"/>
+  <rect x="1" y="1" width="638" height="358" rx="3" fill="none" stroke="#E4E4E2" stroke-width="1"/>
+  <text x="320" y="168" font-family="system-ui, sans-serif" font-size="13"
+        fill="#9A9A9A" text-anchor="middle">Фото не загружено</text>
+  <text x="320" y="192" font-family="system-ui, sans-serif" font-size="11"
+        fill="#C4C4C2" text-anchor="middle">Добавьте путь в data/cases.json</text>
+</svg>
