@@ -1,8 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360">
-  <rect width="640" height="360" fill="#F8F8F7"/>
-  <rect x="1" y="1" width="638" height="358" rx="3" fill="none" stroke="#E4E4E2" stroke-width="1"/>
-  <text x="320" y="168" font-family="system-ui, sans-serif" font-size="13"
-        fill="#9A9A9A" text-anchor="middle">Фото не загружено</text>
-  <text x="320" y="192" font-family="system-ui, sans-serif" font-size="11"
-        fill="#C4C4C2" text-anchor="middle">Добавьте путь в data/cases.json</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 800">
+  <rect width="1280" height="800" fill="#F1EFEB"/>
+  <rect x="0.5" y="0.5" width="1279" height="799" fill="none" stroke="#E7E4DE"/>
+  <text x="640" y="388" font-family="system-ui, sans-serif" font-size="22"
+        fill="#9C968C" text-anchor="middle">Изображение не загружено</text>
+  <text x="640" y="420" font-family="system-ui, sans-serif" font-size="17"
+        fill="#C4BFB6" text-anchor="middle">Проверьте путь в data/cases.json</text>
 </svg>

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>kwwmen — AI-анимация фотографий</title>
-<meta name="description" content="Меньшиков Фёдор — нейросетевая анимация фотографий. Превращаю фото в видео с помощью AI.">
+<meta name="description" content="Меньшиков Фёдор — нейросетевая анимация фотографий. Превращаю статичные снимки в видео.">
 
 <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
 
@@ -16,8 +16,9 @@
 
 <meta property="og:type"        content="website">
 <meta property="og:title"       content="kwwmen — AI-анимация фотографий">
-<meta property="og:description" content="Нейросетевая анимация фотографий. Превращаю фото в видео.">
+<meta property="og:description" content="Нейросетевая анимация фотографий. Превращаю статичные снимки в видео.">
 <meta property="og:image"       content="assets/img/og-cover.jpg">
+<meta name="theme-color"        content="#F7F6F3">
 
 <script type="module" src="assets/js/main.js"></script>
 </head>
@@ -34,28 +35,29 @@
 
 <main id="main">
 
-  <section class="hero" aria-label="Заголовок">
-    <div class="container">
+  <section class="hero" aria-label="О направлении">
+    <div class="container hero__inner">
       <p class="hero__eyebrow" data-site="heroEyebrow"></p>
       <h1 class="hero__title" data-site="heroTitle"></h1>
       <p class="hero__lead" data-site="heroLead"></p>
+      <div class="hero__actions" data-site="heroActions"></div>
     </div>
   </section>
 
   <section class="section" id="cases" aria-labelledby="cases-title">
     <div class="container">
       <div class="section__head">
-        <h2 class="section__title" id="cases-title">Кейсы</h2>
+        <h2 class="section__title" id="cases-title" data-num="01">Работы</h2>
         <span class="section__index" data-count="cases" aria-live="polite"></span>
       </div>
-      <div class="case-grid" id="case-grid" role="list"></div>
+      <div class="case-grid" id="case-grid"></div>
     </div>
   </section>
 
-  <section class="section" id="services" aria-labelledby="services-title">
+  <section class="section section--alt" id="services" aria-labelledby="services-title">
     <div class="container">
       <div class="section__head">
-        <h2 class="section__title" id="services-title">Услуги</h2>
+        <h2 class="section__title" id="services-title" data-num="02">Услуги</h2>
         <span class="section__index" data-count="services"></span>
       </div>
       <div class="service-grid" id="service-grid"></div>
@@ -65,17 +67,17 @@
   <section class="section" id="testimonials" aria-labelledby="testimonials-title">
     <div class="container">
       <div class="section__head">
-        <h2 class="section__title" id="testimonials-title">Отзывы</h2>
+        <h2 class="section__title" id="testimonials-title" data-num="03">Отзывы</h2>
         <span class="section__index" data-count="testimonials"></span>
       </div>
       <div class="testimonial-grid" id="testimonial-grid"></div>
     </div>
   </section>
 
-  <section class="section" id="contact" aria-labelledby="contact-title">
+  <section class="section section--alt" id="contact" aria-labelledby="contact-title">
     <div class="container">
       <div class="section__head">
-        <h2 class="section__title" id="contact-title">Контакты</h2>
+        <h2 class="section__title" id="contact-title" data-num="04">Контакты</h2>
       </div>
       <div id="contact-body"></div>
     </div>
@@ -87,11 +89,7 @@
   <div class="container" data-site="footer"></div>
 </footer>
 
-<!-- Модальное окно кейса -->
-<div class="modal" id="case-modal" hidden role="dialog" aria-modal="true"></div>
-
-<!-- Lightbox для фотографий -->
-<div class="lightbox" id="lightbox" hidden role="dialog" aria-modal="true"></div>
+<div class="modal" id="case-modal" hidden></div>
 
 </body>
 </html>

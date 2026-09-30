@@ -1,6 +1,5 @@
 /**
  * Единственная точка конфигурации проекта.
- * Меняйте здесь пути и режимы — компоненты трогать не нужно.
  */
 export const CONFIG = {
   /** Каталог с JSON-данными (относительно корня сайта) */
@@ -23,6 +22,6 @@ export const CONFIG = {
     params: 'autoplay=1&rel=0&modestbranding=1&playsinline=1'
   },
 
-  /** true = показывать кейсы с status:"demo" */
+  /** true = показывать кейсы со status:"demo" */
   showDemo: true
 };

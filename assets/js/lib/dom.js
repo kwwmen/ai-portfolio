@@ -15,7 +15,6 @@ export function clear(node) {
   return node;
 }
 
-/** Найти [data-site="key"] внутри root и вставить text */
 export function setText(root, key, value) {
   const node = root.querySelector(`[data-site="${CSS.escape(key)}"]`);
   if (node && value != null) node.textContent = value;
@@ -29,7 +28,6 @@ export function setAttr(node, name, value) {
 
 /**
  * Безопасная ссылка — пропускает только http(s), mailto, tel, / и #.
- * Отклоняет javascript:, data: и всё прочее.
  */
 export function safeHref(raw) {
   if (typeof raw !== 'string') return null;
@@ -37,4 +35,24 @@ export function safeHref(raw) {
   if (!url) return null;
   if (/^(https?:|mailto:|tel:|\/|#)/i.test(url)) return url;
   return null;
+}
+
+/**
+ * Мягкое проявление картинки после декодирования.
+ * Ставит класс is-loaded — CSS делает плавный fade.
+ */
+export function fadeInImage(img) {
+  const done = () => img.classList.add('is-loaded');
+
+  if (img.complete && img.naturalWidth > 0) {
+    done();
+    return;
+  }
+  img.addEventListener('load', done, { once: true });
+  img.addEventListener('error', done, { once: true });
+}
+
+/** Двузначный номер: 1 → «01» */
+export function pad2(n) {
+  return String(n).padStart(2, '0');
 }

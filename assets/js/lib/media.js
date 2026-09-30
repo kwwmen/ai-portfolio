@@ -14,10 +14,11 @@ export async function resolveImage(path) {
     return resolveYandex(path);
   }
 
-  // local: /Photo/case-1/a.jpg → assets/img/cases/case-1/a.jpg
+  /* local: /Photo/case-1/a.jpg → assets/img/cases/case-1/a.jpg */
   const normalized = String(path)
     .replace(/^\/?Photo\//i, '')
     .replace(/^\//, '');
+
   return `assets/img/cases/${normalized}`;
 }
 
@@ -49,9 +50,10 @@ async function resolveYandex(path) {
 
 /* ── YouTube ─────────────────────────────────────── */
 
-/** Вытаскивает 11-символьный ID из любой формы ссылки YouTube */
+/** Достаёт 11-символьный ID из любой формы ссылки YouTube */
 export function parseYouTubeId(input) {
   if (!input) return null;
+
   const s = String(input).trim();
   if (/^[A-Za-z0-9_-]{11}$/.test(s)) return s;
 
@@ -67,6 +69,7 @@ export function parseYouTubeId(input) {
     const m = s.match(re);
     if (m) return m[1];
   }
+
   return null;
 }
 

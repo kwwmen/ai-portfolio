@@ -1,41 +1,49 @@
-import { el, setAttr, safeHref } from '../lib/dom.js';
+import { el, setAttr, fadeInImage, pad2 } from '../lib/dom.js';
 import { resolveImage, parseYouTubeId, youTubeThumb } from '../lib/media.js';
-import { CONFIG } from '../config.js';
 
 /**
- * Карточка кейса — кнопка, открывает модальное окно.
- * @param {object} caseData — одна запись из cases.json
- * @param {Function} onClick — вызывается при клике, получает caseData
+ * Карточка кейса. Кнопка — открывает модальное окно.
+ * @param {object}   caseData — запись из cases.json
+ * @param {Function} onClick
+ * @param {boolean}  feature  — крупная карточка (первая в сетке)
  */
-export async function CaseCard(caseData, onClick) {
-  const { id, number, status, title, result, video, photos } = caseData;
+export async function CaseCard(caseData, onClick, feature = false) {
+  const { id, number, status, title, result, video, photos, price } = caseData;
 
   const card = el('button', 'case-card');
+  if (feature) card.classList.add('case-card--feature');
   card.type = 'button';
   setAttr(card, 'aria-label', `Открыть кейс: ${title}`);
   setAttr(card, 'data-case-id', id);
 
-  // ── Превью ────────────────────────────────────────
+  /* ── Медиа ──────────────────────────────────────── */
+
   const media = el('div', 'case-card__media');
 
-  const badge = el('span', 'case-card__badge', `№${number}`);
-  media.appendChild(badge);
+  media.appendChild(el('span', 'case-card__badge', `№${pad2(number)}`));
 
   if (status === 'demo') {
     media.appendChild(el('span', 'case-card__demo-tag', 'Demo'));
   }
 
-  // Источник превью: YouTube-стоп-кадр > первое фото > заглушка
+  const hint = el('span', 'case-card__hint', 'Смотреть');
+  media.appendChild(hint);
+
   const img = el('img');
   img.alt = title;
   img.loading = 'lazy';
   img.decoding = 'async';
-  img.width = 640;
-  img.height = 360;
+  img.width = 1280;
+  img.height = 800;
 
   const ytId = parseYouTubeId(video);
   if (ytId) {
-    img.src = youTubeThumb(ytId, 'hqdefault');
+    img.src = youTubeThumb(ytId, 'maxresdefault');
+    img.addEventListener(
+      'error',
+      () => { img.src = youTubeThumb(ytId, 'hqdefault'); },
+      { once: true }
+    );
   } else if (photos && photos.length > 0) {
     const resolved = await resolveImage(photos[0]);
     img.src = resolved || 'assets/img/placeholder.svg';
@@ -43,22 +51,35 @@ export async function CaseCard(caseData, onClick) {
     img.src = 'assets/img/placeholder.svg';
   }
 
-  img.onerror = () => { img.src = 'assets/img/placeholder.svg'; };
+  img.addEventListener(
+    'error',
+    () => { img.src = 'assets/img/placeholder.svg'; },
+    { once: true }
+  );
 
+  fadeInImage(img);
   media.appendChild(img);
   card.appendChild(media);
 
-  // ── Текст ─────────────────────────────────────────
-  card.appendChild(el('h3', 'case-card__title', title));
+  /* ── Текст ──────────────────────────────────────── */
+
+  const body = el('div', 'case-card__body');
+
+  body.appendChild(el('h3', 'case-card__title', title));
 
   if (result) {
-    card.appendChild(el('p', 'case-card__result', result));
+    body.appendChild(el('p', 'case-card__result', result));
   }
 
   const meta = el('div', 'case-card__meta');
   if (video) meta.appendChild(el('span', null, '▶ Видео'));
-  if (photos && photos.length > 0) meta.appendChild(el('span', null, `${photos.length} фото`));
-  if (meta.children.length > 0) card.appendChild(meta);
+  if (photos && photos.length > 0) {
+    meta.appendChild(el('span', null, `${photos.length} фото`));
+  }
+  if (price) meta.appendChild(el('span', null, price));
+  if (meta.children.length > 0) body.appendChild(meta);
+
+  card.appendChild(body);
 
   card.addEventListener('click', () => onClick(caseData));
 

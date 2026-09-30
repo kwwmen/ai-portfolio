@@ -1,19 +1,19 @@
-import { el } from '../lib/dom.js';
+import { el, fadeInImage } from '../lib/dom.js';
 import { resolveImage } from '../lib/media.js';
 
 /**
- * Lightbox для просмотра фотографий.
- * Возвращает объект { element, open, hide }.
+ * Полноэкранный просмотр фотографий.
+ * @returns {{ element: HTMLElement, open: Function, hide: Function }}
  */
 export function Lightbox() {
   const overlay = el('div', 'lightbox');
   overlay.setAttribute('hidden', '');
   overlay.setAttribute('role', 'dialog');
   overlay.setAttribute('aria-modal', 'true');
-  overlay.setAttribute('aria-label', 'Просмотр фото');
+  overlay.setAttribute('aria-label', 'Просмотр фотографий');
 
-  const imgEl = el('img', 'lightbox__img');
-  imgEl.alt = '';
+  const img = el('img', 'lightbox__img');
+  img.alt = '';
 
   const closeBtn = el('button', 'lightbox__close');
   closeBtn.type = 'button';
@@ -31,28 +31,47 @@ export function Lightbox() {
   nextBtn.textContent = '›';
 
   const counter = el('p', 'lightbox__counter');
+  counter.setAttribute('aria-live', 'polite');
 
-  overlay.append(imgEl, closeBtn, prevBtn, nextBtn, counter);
+  overlay.append(img, closeBtn, prevBtn, nextBtn, counter);
 
   let photos = [];
   let current = 0;
 
-  async function show(index) {
-    current = Math.max(0, Math.min(index, photos.length - 1));
-    imgEl.src = '';
-    const resolved = await resolveImage(photos[current]);
-    imgEl.src = resolved || 'assets/img/placeholder.svg';
-    imgEl.alt = `Фото ${current + 1} из ${photos.length}`;
-    counter.textContent = `${current + 1} / ${photos.length}`;
-    prevBtn.style.display = photos.length <= 1 ? 'none' : '';
-    nextBtn.style.display = photos.length <= 1 ? 'none' : '';
+  function render() {
+    img.classList.remove('is-loaded');
+    img.src = '';
+
+    const single = photos.length <= 1;
+    prevBtn.style.display = single ? 'none' : '';
+    nextBtn.style.display = single ? 'none' : '';
+
+    counter.textContent = single ? '' : `${current + 1} / ${photos.length}`;
+    img.alt = `Фото ${current + 1} из ${photos.length}`;
+
+    fadeInImage(img);
+
+    resolveImage(photos[current]).then(resolved => {
+      img.src = resolved || 'assets/img/placeholder.svg';
+    });
   }
 
-  function open(photoList, index = 0) {
-    photos = photoList;
+  function go(index) {
+    if (photos.length === 0) return;
+    current = (index + photos.length) % photos.length;
+    render();
+  }
+
+  function open(list, index = 0) {
+    if (!Array.isArray(list) || list.length === 0) return;
+
+    photos = list;
+    current = Math.max(0, Math.min(index, list.length - 1));
+
     overlay.removeAttribute('hidden');
     document.body.style.overflow = 'hidden';
-    show(index);
+
+    render();
     closeBtn.focus();
   }
 
@@ -60,18 +79,34 @@ export function Lightbox() {
     overlay.setAttribute('hidden', '');
     document.body.style.overflow = '';
     photos = [];
+    img.src = '';
   }
 
   closeBtn.addEventListener('click', hide);
-  overlay.addEventListener('click', e => { if (e.target === overlay) hide(); });
-  prevBtn.addEventListener('click', () => show(current - 1));
-  nextBtn.addEventListener('click', () => show(current + 1));
+  prevBtn.addEventListener('click', () => go(current - 1));
+  nextBtn.addEventListener('click', () => go(current + 1));
+
+  overlay.addEventListener('click', e => {
+    if (e.target === overlay) hide();
+  });
 
   document.addEventListener('keydown', e => {
     if (overlay.hasAttribute('hidden')) return;
-    if (e.key === 'ArrowLeft')  show(current - 1);
-    if (e.key === 'ArrowRight') show(current + 1);
+    if (e.key === 'ArrowLeft')  go(current - 1);
+    if (e.key === 'ArrowRight') go(current + 1);
   });
+
+  /* Свайпы на телефоне */
+  let startX = 0;
+  overlay.addEventListener('touchstart', e => {
+    startX = e.changedTouches[0].clientX;
+  }, { passive: true });
+
+  overlay.addEventListener('touchend', e => {
+    const dx = e.changedTouches[0].clientX - startX;
+    if (Math.abs(dx) < 48) return;
+    go(dx < 0 ? current + 1 : current - 1);
+  }, { passive: true });
 
   return { element: overlay, open, hide };
 }

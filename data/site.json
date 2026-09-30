@@ -2,21 +2,26 @@
   "brand": "kwwmen",
   "name": "Меньшиков Фёдор",
   "tagline": "AI-анимация фотографий",
+
   "heroEyebrow": "AI photo-to-video",
-  "heroTitle": "Превращаю фотографии в видео с помощью AI",
-  "heroLead": "Нейросетевая анимация статичных снимков — оживляю фото, создаю движение и превращаю их в готовые ролики для соцсетей, рекламы и проектов.",
+  "heroTitle": "Оживляю фотографии | с помощью нейросетей",
+  "heroLead": "Превращаю статичные снимки в видео: движение, дыхание, свет. Готовые ролики под соцсети, рекламу и карточки товаров — из одного фото.",
+
   "contacts": [
-    { "label": "Telegram",  "value": "@kwwmen",        "href": "https://t.me/kwwmen" },
-    { "label": "Email",     "value": "patpnk@yandex.ru", "href": "mailto:patpnk@yandex.ru" }
+    { "label": "Telegram", "value": "@kwwmen",        "href": "https://t.me/kwwmen" },
+    { "label": "Почта",    "value": "patpnk@yandex.ru", "href": "mailto:patpnk@yandex.ru" }
   ],
+
   "nav": [
-    { "label": "Кейсы",    "href": "#cases" },
+    { "label": "Работы",   "href": "#cases" },
     { "label": "Услуги",   "href": "#services" },
     { "label": "Отзывы",   "href": "#testimonials", "optional": true },
     { "label": "Контакты", "href": "#contact" }
   ],
+
   "footer": {
-    "about": "Делаю AI-анимацию фотографий — от портретов до продуктовых съёмок. Каждый ролик собирается под задачу клиента."
+    "about": "Делаю AI-анимацию фотографий под конкретную задачу. Работаю напрямую — без посредников и менеджеров."
   },
+
   "year": 2024
 }

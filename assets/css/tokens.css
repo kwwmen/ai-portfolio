@@ -1,43 +1,78 @@
-:root {
-  --c-bg:            #F8F8F7;
-  --c-surface:       #FFFFFF;
-  --c-border:        #E4E4E2;
-  --c-border-strong: #CFCFCC;
-  --c-text:          #1C1C1C;
-  --c-text-muted:    #6A6A6A;
-  --c-text-faint:    #9A9A9A;
-  --c-focus:         #2563EB;
+/* ============================================================
+   Дизайн-токены — единственное место, где меняется внешний вид.
+   Палитра: тёплая бумага, чернила, один акцент — бронза.
+   ============================================================ */
 
+:root {
+  /* ── Цвет ──────────────────────────────────────────────── */
+  --c-bg:            #F7F6F3;
+  --c-bg-alt:        #F1EFEB;
+  --c-surface:       #FFFFFF;
+  --c-border:        #E7E4DE;
+  --c-border-strong: #D2CDC4;
+  --c-text:          #171614;
+  --c-text-muted:    #6E6A63;
+  --c-text-faint:    #9C968C;
+  --c-accent:        #9A5B33;
+  --c-accent-soft:   rgba(154, 91, 51, 0.10);
+  --c-focus:         #171614;
+  --c-overlay:       rgba(20, 19, 17, 0.52);
+
+  /* ── Шрифты ────────────────────────────────────────────── */
   --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto,
                "Helvetica Neue", Arial, sans-serif;
+  --font-display: Georgia, "Iowan Old Style", "Palatino Linotype",
+                  "Book Antiqua", Palatino, serif;
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+               "Liberation Mono", monospace;
 
-  --fs-xs:   0.75rem;
-  --fs-sm:   0.875rem;
+  /* ── Размеры текста ───────────────────────────────────── */
+  --fs-xs:   0.6875rem;
+  --fs-sm:   0.8125rem;
   --fs-base: 1rem;
   --fs-lg:   1.125rem;
   --fs-xl:   1.375rem;
-  --fs-2xl:  1.75rem;
-  --fs-3xl:  2.25rem;
-  --fs-4xl:  3rem;
+  --fs-2xl:  1.875rem;
 
-  --lh-tight: 1.15;
-  --lh-snug:  1.35;
-  --lh-base:  1.65;
+  --fs-display: clamp(2.125rem, 6.2vw, 4.25rem);
+  --fs-section: clamp(1.5rem, 3.4vw, 2.125rem);
 
+  --lh-tight: 1.08;
+  --lh-snug:  1.4;
+  --lh-base:  1.7;
+
+  /* ── Ритм ──────────────────────────────────────────────── */
   --sp-1:  0.25rem;
   --sp-2:  0.5rem;
   --sp-3:  0.75rem;
   --sp-4:  1rem;
+  --sp-5:  1.25rem;
   --sp-6:  1.5rem;
   --sp-8:  2rem;
+  --sp-10: 2.5rem;
   --sp-12: 3rem;
   --sp-16: 4rem;
-  --sp-24: 6rem;
 
-  --maxw:      1180px;
-  --radius:    2px;
-  --radius-md: 4px;
+  --maxw:      1200px;
+  --maxw-text: 62ch;
 
-  --dur:  150ms;
-  --ease: cubic-bezier(0.2, 0, 0.2, 1);
+  --radius-sm: 2px;
+  --radius:    3px;
+  --radius-md: 6px;
+
+  /* ── Тени ──────────────────────────────────────────────── */
+  --shadow-sm: 0 1px 2px rgba(23, 22, 20, 0.04);
+  --shadow-md: 0 10px 30px -12px rgba(23, 22, 20, 0.14),
+               0 2px 6px -2px rgba(23, 22, 20, 0.05);
+  --shadow-lg: 0 32px 80px -28px rgba(23, 22, 20, 0.30),
+               0 6px 16px -6px rgba(23, 22, 20, 0.08);
+
+  /* ── Анимация ──────────────────────────────────────────── */
+  --dur-fast: 180ms;
+  --dur:      320ms;
+  --dur-slow: 680ms;
+
+  --ease-out:    cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-soft:   cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
 }

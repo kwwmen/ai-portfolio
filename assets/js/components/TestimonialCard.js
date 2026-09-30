@@ -1,9 +1,9 @@
-import { el, safeHref } from '../lib/dom.js';
+import { el } from '../lib/dom.js';
 
 /**
  * Карточка отзыва.
- * @param {object} t — одна запись из testimonials.json
- * @param {object[]} cases — массив из cases.json (для подписи «кейс №X»)
+ * @param {object}   t     — запись из testimonials.json
+ * @param {object[]} cases — массив из cases.json (для подписи «Кейс №X»)
  */
 export function TestimonialCard(t, cases = []) {
   const card = el('article', 'testimonial');
@@ -17,7 +17,9 @@ export function TestimonialCard(t, cases = []) {
   if (t.caseId) {
     const linked = cases.find(c => c.id === t.caseId);
     if (linked) {
-      footer.appendChild(el('p', 'testimonial__case', `Кейс №${linked.number} — ${linked.title}`));
+      footer.appendChild(
+        el('p', 'testimonial__case', `Кейс №${linked.number} — ${linked.title}`)
+      );
     }
   }
 
