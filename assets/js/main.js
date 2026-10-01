@@ -16,6 +16,12 @@ import { Gallery } from './components/Gallery.js';
 import { Lightbox } from './components/Lightbox.js';
 import { ServiceCard } from './components/ServiceCard.js';
 import { TestimonialCard } from './components/TestimonialCard.js';
+import { ProcessList } from './components/ProcessList.js';
+import { IncludedList } from './components/IncludedList.js';
+import { PricingBlock } from './components/PricingBlock.js';
+import { AudienceCard } from './components/AudienceCard.js';
+import { FaqList } from './components/FaqList.js';
+import { mountBeforeAfter } from './components/BeforeAfter.js';
 
 document.documentElement.classList.add('has-js');
 
@@ -36,14 +42,15 @@ async function main() {
   const caseGrid = document.getElementById('case-grid');
   showSkeleton(caseGrid, 3);
 
-  let site, cases, services, testimonials;
+  let site, cases, services, testimonials, page;
 
   try {
-    [site, cases, services, testimonials] = await Promise.all([
+    [site, cases, services, testimonials, page] = await Promise.all([
       loadJSON('site.json'),
       loadJSON('cases.json'),
       loadJSON('services.json'),
-      loadJSON('testimonials.json')
+      loadJSON('testimonials.json'),
+      loadJSON('page.json')
     ]);
   } catch (err) {
     console.error('[main] Не удалось загрузить данные:', err);
@@ -65,10 +72,18 @@ async function main() {
     c => c.status === 'published' || (CONFIG.showDemo && c.status === 'demo')
   );
 
+  renderBeforeAfter(page, visibleCases);
   renderCases(visibleCases, testimonials);
+  renderProcess(page);
+  renderIncluded(page);
   renderServices(services);
+  renderPricing(page);
+  renderAudience(page);
+  renderCtaMid(page);
   renderTestimonials(testimonials, visibleCases);
+  renderFaq(page);
   renderContact(site);
+  renderCtaFinal(page);
   renderFooter(site);
 
   initActiveNav();
@@ -118,6 +133,9 @@ function renderHero(site) {
   if (eyebrow) eyebrow.textContent = site.heroEyebrow || '';
   if (lead)    lead.textContent    = site.heroLead || '';
 
+  const priceEl = document.querySelector('[data-site="heroPrice"]');
+  if (priceEl && site.heroPrice) priceEl.textContent = site.heroPrice;
+
   /* Заголовок: часть после «|» выделяется акцентным курсивом */
   if (title) {
     const raw = site.heroTitle || site.name || '';
@@ -133,26 +151,28 @@ function renderHero(site) {
     }
   }
 
-  /* Кнопки действий строим из контактов: первая — основная */
-  if (!actions || !Array.isArray(site.contacts)) return;
+  /* Две основные кнопки: "Посмотреть работы" и "Обсудить проект" */
+  if (!actions) return;
 
-  const primary = site.contacts[0];
-  if (primary) {
-    const href = safeHref(primary.href);
-    if (href) {
-      const btn = el('a', 'btn btn--primary', `Написать в ${primary.label}`);
-      btn.href = href;
-      if (href.startsWith('http')) {
-        btn.target = '_blank';
-        btn.rel = 'noopener noreferrer';
+  const viewWorks = el('a', 'btn btn--ghost', 'Посмотреть работы');
+  viewWorks.href = '#cases';
+  actions.appendChild(viewWorks);
+
+  if (Array.isArray(site.contacts)) {
+    const primary = site.contacts[0];
+    if (primary) {
+      const href = safeHref(primary.href);
+      if (href) {
+        const btn = el('a', 'btn btn--primary', 'Обсудить проект');
+        btn.href = href;
+        if (href.startsWith('http')) {
+          btn.target = '_blank';
+          btn.rel = 'noopener noreferrer';
+        }
+        actions.appendChild(btn);
       }
-      actions.appendChild(btn);
     }
   }
-
-  const ghost = el('a', 'btn btn--ghost', 'Смотреть работы');
-  ghost.href = '#cases';
-  actions.appendChild(ghost);
 }
 
 /* ── Кейсы ──────────────────────────────────────── */
@@ -359,6 +379,154 @@ function renderFooter(site) {
   footer.appendChild(bottom);
 
   reveal(footer.querySelector('.site-footer__grid'));
+}
+
+/* ── Было → Стало ───────────────────────────────── */
+
+function renderBeforeAfter(page, cases) {
+  const section = document.getElementById('before-after');
+  const ba = page?.beforeAfter;
+  if (!section || !ba) { if (section) section.hidden = true; return; }
+
+  const targetCase = cases.find(c => c.id === ba.caseId);
+  if (!targetCase || !targetCase.video) { section.hidden = true; return; }
+
+  const beforeTag = section.querySelector('.ba__tag--before');
+  const afterTag  = section.querySelector('.ba__tag--after');
+  const caption   = section.querySelector('.ba__caption');
+
+  if (beforeTag) beforeTag.textContent = ba.beforeLabel || 'Было';
+  if (afterTag)  afterTag.textContent  = ba.afterLabel  || 'Стало';
+  if (caption)   caption.textContent   = `${ba.beforeText || ''} → ${ba.afterText || ''}`;
+
+  mountBeforeAfter(targetCase);
+  reveal(section.querySelector('.container'));
+}
+
+/* ── Как проходит работа ────────────────────────── */
+
+function renderProcess(page) {
+  const container = document.getElementById('process-list');
+  const steps = page?.process;
+  if (!container) return;
+
+  if (!Array.isArray(steps) || steps.length === 0) {
+    const section = document.getElementById('process');
+    if (section) section.hidden = true;
+    return;
+  }
+
+  container.appendChild(ProcessList(steps));
+  revealAll(container.querySelectorAll('.process__step'), 100);
+}
+
+/* ── Что входит в ролик ──────────────────────────── */
+
+function renderIncluded(page) {
+  const list = document.getElementById('included-list');
+  const footnote = document.getElementById('included-footnote');
+  const data = page?.included;
+
+  if (!list) return;
+
+  if (!data || !Array.isArray(data.items) || data.items.length === 0) {
+    const section = document.getElementById('included');
+    if (section) section.hidden = true;
+    return;
+  }
+
+  const built = IncludedList(data.items);
+  list.replaceWith(built);
+  built.id = 'included-list';
+
+  if (footnote && data.footnote) footnote.textContent = data.footnote;
+
+  reveal(built);
+}
+
+/* ── Цены ────────────────────────────────────────── */
+
+function renderPricing(page) {
+  const container = document.getElementById('pricing-block');
+  const pricing = page?.pricing;
+  if (!container) return;
+
+  if (!pricing || (!pricing.basic && !pricing.custom)) {
+    container.hidden = true;
+    return;
+  }
+
+  container.appendChild(PricingBlock(pricing));
+  revealAll(container.querySelectorAll('.pricing-card'), 100);
+}
+
+/* ── Для кого ────────────────────────────────────── */
+
+function renderAudience(page) {
+  const grid = document.getElementById('audience-grid');
+  const items = page?.audience;
+  if (!grid) return;
+
+  if (!Array.isArray(items) || items.length === 0) {
+    const section = document.getElementById('audience');
+    if (section) section.hidden = true;
+    return;
+  }
+
+  const cards = items.map(a => AudienceCard(a));
+  cards.forEach(c => grid.appendChild(c));
+  revealAll(cards, 90);
+}
+
+/* ── CTA (середина страницы) ───────────────────────── */
+
+function renderCtaMid(page) {
+  const section = document.getElementById('cta-mid');
+  const data = page?.ctaMid;
+  if (!section) return;
+
+  if (!data) { section.hidden = true; return; }
+
+  const title = document.getElementById('cta-mid-title');
+  const text  = document.getElementById('cta-mid-text');
+  if (title) title.textContent = data.title || '';
+  if (text)  text.textContent  = data.text || '';
+
+  reveal(section.querySelector('.cta-mid__inner'));
+}
+
+/* ── FAQ ─────────────────────────────────────────── */
+
+function renderFaq(page) {
+  const container = document.getElementById('faq-list');
+  const items = page?.faq;
+  if (!container) return;
+
+  if (!Array.isArray(items) || items.length === 0) {
+    const section = document.getElementById('faq');
+    if (section) section.hidden = true;
+    return;
+  }
+
+  container.appendChild(FaqList(items));
+  reveal(container);
+}
+
+/* ── CTA (финальный блок) ──────────────────────────── */
+
+function renderCtaFinal(page) {
+  const section = document.getElementById('cta-final');
+  const data = page?.ctaFinal;
+  if (!section) return;
+
+  if (!data) { section.hidden = true; return; }
+
+  const title = document.getElementById('cta-final-title');
+  const text  = document.getElementById('cta-final-text');
+  if (title) title.textContent = data.title || '';
+  if (text)  text.textContent  = data.text || '';
+
+  reveal(section.querySelector('.cta-final__inner'));
 }
 
 main();
