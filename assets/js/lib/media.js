@@ -73,10 +73,25 @@ export function parseYouTubeId(input) {
   return null;
 }
 
+/**
+ * Стоп-кадр, размещённый в самом репозитории.
+ * Лежит в assets/img/thumbs/<id>.webp — грузится с того же домена,
+ * не зависит от доступности i.ytimg.com.
+ */
+export function localThumb(id) {
+  return `assets/img/thumbs/${id}.webp`;
+}
+
+/** Резервный вариант: стоп-кадр напрямую с серверов YouTube */
 export function youTubeThumb(id, quality = 'hqdefault') {
   return `https://i.ytimg.com/vi/${id}/${quality}.jpg`;
 }
 
 export function youTubeEmbedUrl(id) {
   return `${CONFIG.youtube.host}/embed/${id}?${CONFIG.youtube.params}`;
+}
+
+/** Прямая ссылка на ролик — для кнопки «Открыть на YouTube» */
+export function youTubeWatchUrl(id) {
+  return `https://youtu.be/${id}`;
 }

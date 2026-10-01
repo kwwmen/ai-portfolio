@@ -399,7 +399,7 @@ function renderBeforeAfter(page, cases) {
   if (afterTag)  afterTag.textContent  = ba.afterLabel  || 'Стало';
   if (caption)   caption.textContent   = `${ba.beforeText || ''} → ${ba.afterText || ''}`;
 
-  mountBeforeAfter(targetCase);
+  mountBeforeAfter(targetCase, ba);
   reveal(section.querySelector('.container'));
 }
 

@@ -31,7 +31,8 @@
 
 .case-card__media {
   position: relative;
-  aspect-ratio: 16 / 10;
+  /* 16:9 — ровно как кадр видео. Ничего не обрезается по краям */
+  aspect-ratio: 16 / 9;
   overflow: hidden;
   background: var(--c-bg-alt);
   border: 1px solid var(--c-border);
@@ -42,11 +43,11 @@
               transform var(--dur-slow) var(--ease-out);
 }
 
-.case-card--feature .case-card__media { aspect-ratio: 16 / 8; }
+.case-card--feature .case-card__media { aspect-ratio: 16 / 9; }
 
 @media (max-width: 680px) {
   .case-card__media,
-  .case-card--feature .case-card__media { aspect-ratio: 16 / 10; }
+  .case-card--feature .case-card__media { aspect-ratio: 16 / 9; }
 }
 
 .case-card__media img {
@@ -457,6 +458,12 @@
   gap: var(--sp-3);
 }
 
+/* Пропорции ячейки под ориентацию снимков.
+   Вертикальное фото в горизонтальной ячейке обрезается до полосы —
+   поэтому класс навешивается динамически в Gallery.js */
+.gallery--horizontal .gallery__item { aspect-ratio: 4 / 3; }
+.gallery--vertical   .gallery__item { aspect-ratio: 3 / 4; }
+
 .gallery__item {
   position: relative;
   aspect-ratio: 4 / 3;
@@ -823,7 +830,7 @@
   animation: shimmer 1.5s var(--ease-in-out) infinite;
 }
 
-.skeleton--media { aspect-ratio: 16 / 10; margin-bottom: var(--sp-5); }
+.skeleton--media { aspect-ratio: 16 / 9; margin-bottom: var(--sp-5); }
 .skeleton--line  { height: 14px; border-radius: 3px; }
 .skeleton--line-sm { height: 10px; width: 55%; border-radius: 3px; }
 

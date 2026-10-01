@@ -1,9 +1,17 @@
 import { el, setAttr, fadeInImage } from '../lib/dom.js';
-import { resolveImage, parseYouTubeId, youTubeThumb } from '../lib/media.js';
+import {
+  parseYouTubeId,
+  localThumb,
+  youTubeThumb,
+  resolveImage
+} from '../lib/media.js';
 
 /**
  * Карточка кейса. Кнопка — открывает модальное окно.
- * Номер кейса намеренно не выводится: порядок задаётся в cases.json.
+ * Номер кейса не выводится: порядок задаётся в cases.json.
+ *
+ * Превью берётся из assets/img/thumbs/<id>.webp — с того же домена,
+ * что и сайт. Работает даже там, где i.ytimg.com недоступен.
  *
  * @param {object}   caseData
  * @param {Function} onClick
@@ -21,7 +29,6 @@ export async function CaseCard(caseData, onClick, feature = false) {
   /* ── Медиа ──────────────────────────────────────── */
 
   const media = el('div', 'case-card__media');
-
   media.appendChild(el('span', 'case-card__hint', 'Смотреть'));
 
   const img = el('img');
@@ -29,13 +36,14 @@ export async function CaseCard(caseData, onClick, feature = false) {
   img.loading = feature ? 'eager' : 'lazy';
   img.decoding = 'async';
   img.width = 1280;
-  img.height = 800;
+  img.height = 720;
 
   const ytId = parseYouTubeId(video);
 
   if (ytId) {
     if (feature) img.fetchPriority = 'high';
-    img.src = youTubeThumb(ytId, 'maxresdefault');
+
+    img.src = localThumb(ytId);
     img.addEventListener(
       'error',
       () => { img.src = youTubeThumb(ytId, 'hqdefault'); },

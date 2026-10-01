@@ -1,57 +1,78 @@
-import { parseYouTubeId, youTubeThumb } from '../lib/media.js';
-import { resolveImage } from '../lib/media.js';
+import { parseYouTubeId, youTubeThumb, localThumb, resolveImage } from '../lib/media.js';
 import { YouTubeEmbed } from './YouTubeEmbed.js';
 
 /**
- * Блок «Было → Стало» на реальных материалах кейса.
- * Слева — исходное фото, справа — видео (фасад YouTube).
- * Перетаскиваемый разделитель открывает/закрывает сравнение через clip-path.
+ * Блок «Было → Стало».
  *
- * Монтируется в уже существующую разметку index.html:
- *   #ba-before-img, #ba-after-video, #ba-handle, #ba-slider
+ * Слева — исходная фотография объекта, справа — готовый ролик.
+ * Разделитель перетаскивается мышью и пальцем (clip-path).
  *
- * @param {object} caseData — объект кейса (использует photos[0] и video)
+ * Важно про пропорции: контейнер 16:9. Если подставить вертикальное
+ * фото, `object-fit: cover` обрежет его до узкой полосы — выглядит плохо.
+ * Поэтому в page.json поле `beforePhoto` задаёт горизонтальный кадр явно,
+ * а `object-fit` для него — `cover` только когда пропорции близки.
+ *
+ * @param {object} caseData — объект кейса
+ * @param {object} ba       — секция beforeAfter из page.json
  */
-export async function mountBeforeAfter(caseData) {
-  const slider   = document.getElementById('ba-slider');
+export async function mountBeforeAfter(caseData, ba = {}) {
+  const slider    = document.getElementById('ba-slider');
   const beforeImg = document.getElementById('ba-before-img');
-  const afterSlot  = document.getElementById('ba-after-video');
-  const handle     = document.getElementById('ba-handle');
+  const afterSlot = document.getElementById('ba-after-video');
+  const handle    = document.getElementById('ba-handle');
 
   if (!slider || !beforeImg || !afterSlot || !handle || !caseData) return;
 
-  /* Фото "Было" — первое фото кейса */
-  const photoPath = Array.isArray(caseData.photos) ? caseData.photos[0] : null;
+  const ytId = parseYouTubeId(caseData.video);
+
+  /* ── Кадр «Было» ───────────────────────────────────
+     Приоритет: beforePhoto → первое фото кейса → стоп-кадр видео */
+  let photoPath = ba.beforePhoto || null;
+
+  if (!photoPath && Array.isArray(caseData.photos) && caseData.photos.length > 0) {
+    photoPath = caseData.photos[0];
+  }
+
   if (photoPath) {
     const resolved = await resolveImage(photoPath);
     beforeImg.src = resolved || 'assets/img/placeholder.svg';
+  } else if (ytId) {
+    beforeImg.src = localThumb(ytId);
+    beforeImg.addEventListener(
+      'error',
+      () => { beforeImg.src = youTubeThumb(ytId, 'hqdefault'); },
+      { once: true }
+    );
   } else {
-    /* Фолбэк: стоп-кадр видео, если фото в кейсе нет */
-    const ytId = parseYouTubeId(caseData.video);
-    beforeImg.src = ytId ? youTubeThumb(ytId, 'maxresdefault') : 'assets/img/placeholder.svg';
+    beforeImg.src = 'assets/img/placeholder.svg';
   }
+
   beforeImg.addEventListener(
     'error',
     () => { beforeImg.src = 'assets/img/placeholder.svg'; },
     { once: true }
   );
 
-  /* Видео "Стало" — фасад YouTube того же кейса */
-  afterSlot.appendChild(YouTubeEmbed(caseData.video, caseData.title));
+  /* ── Кадр «Стало» ──────────────────────────────────
+     Тот же кейс, только видео. Превью — eager, чтобы не мигало */
+  afterSlot.appendChild(YouTubeEmbed(caseData.video, caseData.title, '', { eager: true }));
 
-  /* ── Логика перетаскивания разделителя ──────────── */
+  /* ── Перетаскивание разделителя ───────────────────── */
+
   const afterMedia = slider.querySelector('.ba__media--after');
+  if (!afterMedia) return;
 
   let dragging = false;
 
   function setPosition(percent) {
-    const clamped = Math.max(6, Math.min(94, percent));
+    const clamped = Math.max(4, Math.min(96, percent));
     afterMedia.style.clipPath = `inset(0 0 0 ${clamped}%)`;
     handle.style.left = `${clamped}%`;
   }
 
   function percentFromEvent(clientX) {
     const rect = slider.getBoundingClientRect();
+    if (!rect.width) return 50;
     return ((clientX - rect.left) / rect.width) * 100;
   }
 
@@ -66,7 +87,8 @@ export async function mountBeforeAfter(caseData) {
     document.body.style.userSelect = '';
   }
 
-  handle.addEventListener('mousedown', () => {
+  handle.addEventListener('mousedown', e => {
+    e.preventDefault();
     dragging = true;
     document.body.style.userSelect = 'none';
   });
@@ -77,13 +99,45 @@ export async function mountBeforeAfter(caseData) {
   window.addEventListener('mouseup', stopDrag);
   window.addEventListener('touchend', stopDrag);
 
-  /* Клик по слайдеру (не по кнопке плеера) тоже двигает разделитель */
+  /* Клик мимо кнопки плеера — переносим разделитель туда */
   slider.addEventListener('click', e => {
     if (e.target.closest('.yt__btn') || e.target.closest('.yt__iframe')) return;
-    if (e.target === handle) return;
+    if (e.target === handle || handle.contains(e.target)) return;
     setPosition(percentFromEvent(e.clientX));
   });
 
-  /* Начальное положение — по центру */
+  /* Мягкий «подсказывающий» проезд после появления в кадре:
+     разделитель один раз сам сдвигается влево, показывая,
+     что элемент интерактивный. Дальше — только действия пользователя. */
   setPosition(50);
+
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduce) return;
+
+  const hint = new IntersectionObserver(
+    entries => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        hint.unobserve(entry.target);
+
+        const start = performance.now();
+        const from = 50;
+        const to = 30;
+        const dur = 900;
+
+        function step(now) {
+          const t = Math.min((now - start) / dur, 1);
+          /* easeInOutCubic */
+          const e = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+          setPosition(from + (to - from) * e);
+          if (t < 1) requestAnimationFrame(step);
+        }
+
+        requestAnimationFrame(step);
+      });
+    },
+    { threshold: 0.5 }
+  );
+
+  hint.observe(slider);
 }

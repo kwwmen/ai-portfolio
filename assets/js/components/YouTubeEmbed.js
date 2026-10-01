@@ -1,16 +1,22 @@
 import { el, setAttr, fadeInImage } from '../lib/dom.js';
-import { parseYouTubeId, youTubeThumb, youTubeEmbedUrl } from '../lib/media.js';
+import {
+  parseYouTubeId,
+  localThumb,
+  youTubeThumb,
+  youTubeEmbedUrl
+} from '../lib/media.js';
 
 /**
  * Фасад YouTube.
- * До клика — только стоп-кадр (~30 КБ) вместо ~800 КБ скриптов плеера.
+ * До клика — стоп-кадр из assets/img/thumbs (грузится с нашего домена).
  * После клика — настоящий iframe в режиме youtube-nocookie.
  *
  * @param {string} videoValue — ссылка или ID
  * @param {string} title      — используется в aria-label
  * @param {string} label      — подпись на превью (необязательно)
+ * @param {object} opts       — { eager: boolean } — грузить превью сразу
  */
-export function YouTubeEmbed(videoValue, title = 'Видео', label = '') {
+export function YouTubeEmbed(videoValue, title = 'Видео', label = '', opts = {}) {
   const id = parseYouTubeId(videoValue);
   const wrap = el('div', 'yt');
 
@@ -25,15 +31,23 @@ export function YouTubeEmbed(videoValue, title = 'Видео', label = '') {
 
   const img = el('img', 'yt__thumb');
   img.alt = '';
-  img.loading = 'lazy';
+  img.loading = opts.eager ? 'eager' : 'lazy';
   img.decoding = 'async';
   img.width = 1280;
   img.height = 720;
 
-  img.src = youTubeThumb(id, 'maxresdefault');
+  /* Локальный стоп-кадр → резерв с i.ytimg.com */
+  img.src = localThumb(id);
   img.addEventListener(
     'error',
-    () => { img.src = youTubeThumb(id, 'hqdefault'); },
+    () => {
+      img.src = youTubeThumb(id, 'maxresdefault');
+      img.addEventListener(
+        'error',
+        () => { img.src = youTubeThumb(id, 'hqdefault'); },
+        { once: true }
+      );
+    },
     { once: true }
   );
 
@@ -66,8 +80,7 @@ export function YouTubeEmbed(videoValue, title = 'Видео', label = '') {
 
   wrap.appendChild(btn);
 
-  /* Preconnect при первом наведении/касании —
-     экономит ~200 мс до старта воспроизведения */
+  /* Preconnect при первом наведении — экономит время до старта плеера */
   const preconnect = () => {
     if (document.querySelector('link[data-yt-pre]')) return;
     const link = document.createElement('link');
@@ -85,7 +98,6 @@ export function YouTubeEmbed(videoValue, title = 'Видео', label = '') {
     iframe.className = 'yt__iframe';
     iframe.src = youTubeEmbedUrl(id);
     iframe.title = title;
-    iframe.loading = 'lazy';
     iframe.allow =
       'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
     iframe.allowFullscreen = true;
