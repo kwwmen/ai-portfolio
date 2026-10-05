@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>kwwmen — AI-анимация фотографий</title>
+<meta name="description" content="Меньшиков Фёдор — нейросетевая анимация фотографий. Превращаю статичные снимки в видео.">
+
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+
+<link rel="preload" href="assets/css/tokens.css" as="style">
+<link rel="stylesheet" href="assets/css/tokens.css">
+<link rel="stylesheet" href="assets/css/base.css">
+<link rel="stylesheet" href="assets/css/layout.css">
+<link rel="stylesheet" href="assets/css/components.css">
+<link rel="stylesheet" href="assets/css/sections.css">
+<link rel="stylesheet" href="assets/css/polish.css">
+
+<meta property="og:type"        content="website">
+<meta property="og:title"       content="kwwmen — AI-анимация фотографий">
+<meta property="og:description" content="Нейросетевая анимация фотографий. Превращаю статичные снимки в видео.">
+<meta property="og:image"       content="assets/img/og-cover.jpg">
+<meta name="theme-color"        content="#F7F6F3">
+
+<script type="module" src="assets/js/main.js"></script>
+</head>
+<body>
+
+<a href="#main" class="visually-hidden">Перейти к содержимому</a>
+
+<header class="site-header">
+  <div class="container site-header__inner">
+    <a href="#" class="site-header__brand" data-site="brand">kwwmen</a>
+    <nav class="site-nav" data-site="nav" aria-label="Основная навигация"></nav>
+  </div>
+</header>
+
+<main id="main">
+
+  <section class="hero" aria-label="О направлении">
+    <div class="container hero__inner">
+      <p class="hero__eyebrow" data-site="heroEyebrow"></p>
+      <h1 class="hero__title" data-site="heroTitle"></h1>
+      <p class="hero__lead" data-site="heroLead"></p>
+      <p class="hero__price" data-site="heroPrice"></p>
+      <div class="hero__actions" data-site="heroActions"></div>
+    </div>
+  </section>
+
+  <section class="section ba" id="before-after" aria-labelledby="before-after-title">
+    <div class="container">
+      <div class="section__head">
+        <h2 class="section__title" id="before-after-title">Было → Стало</h2>
+      </div>
+      <div class="ba__slider" id="ba-slider">
+        <div class="ba__media ba__media--before">
+          <img id="ba-before-img" alt="Исходная фотография объекта">
+          <span class="ba__tag ba__tag--before">Было</span>
+        </div>
+        <div class="ba__media ba__media--after">
+          <div id="ba-after-video"></div>
+          <span class="ba__tag ba__tag--after">Стало</span>
+        </div>
+        <button class="ba__handle" id="ba-handle" type="button" aria-label="Перетащите, чтобы сравнить">
+          <span class="ba__handle-line"></span>
+          <span class="ba__handle-grip">↔</span>
+        </button>
+      </div>
+      <p class="ba__caption">Обычная фотография объекта превращается в готовый динамичный видеоролик.</p>
+    </div>
+  </section>
+
+  <section class="section" id="cases" aria-labelledby="cases-title">
+    <div class="container">
+      <div class="section__head">
+        <h2 class="section__title" id="cases-title" data-num="01">Работы</h2>
+        <span class="section__index" data-count="cases" aria-live="polite"></span>
+      </div>
+      <div class="case-grid" id="case-grid"></div>
+    </div>
+  </section>
+
+  <section class="section section--alt" id="process" aria-labelledby="process-title">
+    <div class="container">
+      <div class="section__head">
+        <h2 class="section__title" id="process-title" data-num="02">Как проходит работа</h2>
+      </div>
+      <div class="process" id="process-list"></div>
+    </div>
+  </section>
+
+  <section class="section" id="included" aria-labelledby="included-title">
+    <div class="container">
+      <div class="section__head">
+        <h2 class="section__title" id="included-title" data-num="03">Что входит в ролик</h2>
+      </div>
+      <ul class="included" id="included-list"></ul>
+      <p class="included__footnote" id="included-footnote"></p>
+    </div>
+  </section>
+
+  <section class="section section--alt" id="services" aria-labelledby="services-title">
+    <div class="container">
+      <div class="section__head">
+        <h2 class="section__title" id="services-title" data-num="04">Услуги</h2>
+        <span class="section__index" data-count="services"></span>
+      </div>
+      <div class="service-grid" id="service-grid"></div>
+
+      <div class="pricing" id="pricing-block"></div>
+    </div>
+  </section>
+
+  <section class="section" id="audience" aria-labelledby="audience-title">
+    <div class="container">
+      <div class="section__head">
+        <h2 class="section__title" id="audience-title" data-num="05">Для кого</h2>
+      </div>
+      <div class="audience-grid" id="audience-grid"></div>
+    </div>
+  </section>
+
+  <section class="cta-mid" id="cta-mid">
+    <div class="container cta-mid__inner">
+      <h2 class="cta-mid__title" id="cta-mid-title"></h2>
+      <p class="cta-mid__text" id="cta-mid-text"></p>
+      <a class="btn btn--primary" id="cta-mid-btn" href="#contact">Обсудить проект</a>
+    </div>
+  </section>
+
+  <section class="section" id="testimonials" aria-labelledby="testimonials-title">
+    <div class="container">
+      <div class="section__head">
+        <h2 class="section__title" id="testimonials-title" data-num="06">Отзывы</h2>
+        <span class="section__index" data-count="testimonials"></span>
+      </div>
+      <div class="testimonial-grid" id="testimonial-grid"></div>
+    </div>
+  </section>
+
+  <section class="section section--alt" id="faq" aria-labelledby="faq-title">
+    <div class="container">
+      <div class="section__head">
+        <h2 class="section__title" id="faq-title" data-num="07">Вопросы</h2>
+      </div>
+      <div class="faq" id="faq-list"></div>
+    </div>
+  </section>
+
+  <section class="section" id="contact" aria-labelledby="contact-title">
+    <div class="container">
+      <div class="section__head">
+        <h2 class="section__title" id="contact-title" data-num="08">Контакты</h2>
+      </div>
+      <div id="contact-body"></div>
+    </div>
+  </section>
+
+  <section class="cta-final" id="cta-final">
+    <div class="container cta-final__inner">
+      <h2 class="cta-final__title" id="cta-final-title"></h2>
+      <p class="cta-final__text" id="cta-final-text"></p>
+      <a class="btn btn--primary" id="cta-final-btn" href="#contact">Обсудить проект</a>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="container" data-site="footer"></div>
+</footer>
+
+<div class="modal" id="case-modal" hidden></div>
+
+</body>
+</html>
