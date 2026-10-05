@@ -1,6 +1,7 @@
 import { CONFIG } from './config.js';
 import { el, clear, safeHref } from './lib/dom.js';
 import { pluralRu } from './lib/format.js';
+import { typeset } from './lib/typography.js';
 import {
   reveal,
   revealAll,
@@ -89,6 +90,11 @@ async function main() {
   initActiveNav();
 
   /* Запуск анимации героя — после того как тексты вставлены */
+  /* Типографика: неразрывные пробелы во всех отрисованных текстах */
+  typeset(document.querySelector('main'));
+  typeset(document.querySelector('.site-footer'));
+  typeset(document.querySelector('.site-header'));
+
   requestAnimationFrame(() => document.body.classList.add('is-ready'));
 }
 
@@ -388,8 +394,12 @@ function renderBeforeAfter(page, cases) {
   const ba = page?.beforeAfter;
   if (!section || !ba) { if (section) section.hidden = true; return; }
 
-  const targetCase = cases.find(c => c.id === ba.caseId);
-  if (!targetCase || !targetCase.video) { section.hidden = true; return; }
+  /* Секция живёт, если есть либо ролик, либо пара своих кадров */
+  const targetCase = ba.caseId ? cases.find(c => c.id === ba.caseId) : null;
+  const hasOwnPair = Boolean(ba.beforePhoto && ba.afterPhoto);
+  const hasVideo = Boolean(targetCase && targetCase.video);
+
+  if (!hasOwnPair && !hasVideo) { section.hidden = true; return; }
 
   const beforeTag = section.querySelector('.ba__tag--before');
   const afterTag  = section.querySelector('.ba__tag--after');

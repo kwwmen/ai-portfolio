@@ -1,17 +1,13 @@
 import { el, setAttr, fadeInImage } from '../lib/dom.js';
-import {
-  parseYouTubeId,
-  localThumb,
-  youTubeThumb,
-  resolveImage
-} from '../lib/media.js';
+import { posterFor, normalizeSources } from './VideoPlayer.js';
+import { localThumb, youTubeThumb, resolveImage } from '../lib/media.js';
 
 /**
  * Карточка кейса. Кнопка — открывает модальное окно.
  * Номер кейса не выводится: порядок задаётся в cases.json.
  *
- * Превью берётся из assets/img/thumbs/<id>.webp — с того же домена,
- * что и сайт. Работает даже там, где i.ytimg.com недоступен.
+ * Превью берётся локально (assets/img/thumbs/), поэтому карточки
+ * видны даже там, где YouTube или VK недоступны.
  *
  * @param {object}   caseData
  * @param {Function} onClick
@@ -38,17 +34,15 @@ export async function CaseCard(caseData, onClick, feature = false) {
   img.width = 1280;
   img.height = 720;
 
-  const ytId = parseYouTubeId(video);
+  const sources = normalizeSources(video);
 
-  if (ytId) {
+  if (sources.youtube) {
     if (feature) img.fetchPriority = 'high';
 
-    img.src = localThumb(ytId);
-    img.addEventListener(
-      'error',
-      () => { img.src = youTubeThumb(ytId, 'hqdefault'); },
-      { once: true }
-    );
+    img.src = localThumb(sources.youtube);
+    img.addEventListener('error', () => {
+      img.src = youTubeThumb(sources.youtube, 'hqdefault');
+    }, { once: true });
   } else if (Array.isArray(photos) && photos.length > 0) {
     const resolved = await resolveImage(photos[0]);
     img.src = resolved || 'assets/img/placeholder.svg';
@@ -56,11 +50,9 @@ export async function CaseCard(caseData, onClick, feature = false) {
     img.src = 'assets/img/placeholder.svg';
   }
 
-  img.addEventListener(
-    'error',
-    () => { img.src = 'assets/img/placeholder.svg'; },
-    { once: true }
-  );
+  img.addEventListener('error', () => {
+    img.src = 'assets/img/placeholder.svg';
+  }, { once: true });
 
   fadeInImage(img);
   media.appendChild(img);
@@ -76,7 +68,8 @@ export async function CaseCard(caseData, onClick, feature = false) {
   }
 
   const meta = el('div', 'case-card__meta');
-  if (video) meta.appendChild(el('span', null, '▶ Видео'));
+  const hasVideo = Object.keys(sources).length > 0;
+  if (hasVideo) meta.appendChild(el('span', null, '▶ Видео'));
   if (Array.isArray(photos) && photos.length > 0) {
     meta.appendChild(el('span', null, `${photos.length} фото`));
   }

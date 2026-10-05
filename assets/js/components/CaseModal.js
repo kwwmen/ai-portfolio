@@ -1,5 +1,5 @@
 import { el, clear } from '../lib/dom.js';
-import { YouTubeEmbed } from './YouTubeEmbed.js';
+import { VideoPlayer } from './VideoPlayer.js';
 
 /**
  * Модальное окно кейса.
@@ -101,7 +101,7 @@ export function CaseModal(modalEl, testimonials, lightbox, galleryFactory) {
 
     if (c.video) {
       const media = el('div', 'modal__media');
-      media.appendChild(YouTubeEmbed(c.video, c.title));
+      media.appendChild(VideoPlayer(c.video, c.title, { eager: true }));
       panel.appendChild(media);
     }
 

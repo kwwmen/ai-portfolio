@@ -16,7 +16,12 @@
     ],
     "result": "Из обычных фотографий получился полноценный видеоролик, который позволяет показать объект динамичнее и привлекательнее, чем стандартная фотогалерея.",
     "price": "2 000 ₽",
-    "video": "https://youtu.be/n7SkAvXzGXM",
+    "video": {
+      "youtube": "https://youtu.be/n7SkAvXzGXM",
+      "rutube": null,
+      "vk": null,
+      "mp4": null
+    },
     "photos": [
       "/Photo/case-7/1.webp",
       "/Photo/case-7/2.webp",
@@ -44,7 +49,12 @@
     ],
     "result": "Из исходных фотографий получился готовый горизонтальный видеоролик, который показывает квартиру более динамично и позволяет последовательно продемонстрировать основные помещения объекта.",
     "price": null,
-    "video": "https://youtu.be/Dnbqi-Abs_0",
+    "video": {
+      "youtube": "https://youtu.be/Dnbqi-Abs_0",
+      "rutube": null,
+      "vk": null,
+      "mp4": null
+    },
     "photos": [],
     "testimonialId": "testimonial-6",
     "extra": []
@@ -63,7 +73,12 @@
     ],
     "result": "Из обычных фотографий получился короткий ролик, который можно использовать непосредственно в объявлении объекта.",
     "price": null,
-    "video": "https://youtu.be/3NBrOdE1PhM",
+    "video": {
+      "youtube": "https://youtu.be/3NBrOdE1PhM",
+      "rutube": null,
+      "vk": null,
+      "mp4": null
+    },
     "photos": [],
     "testimonialId": "testimonial-5",
     "extra": []
@@ -84,7 +99,12 @@
     ],
     "result": "Получился готовый вертикальный ролик для размещения в объявлении и социальных сетях.",
     "price": null,
-    "video": "https://youtu.be/XFDhxlCMOsc",
+    "video": {
+      "youtube": "https://youtu.be/XFDhxlCMOsc",
+      "rutube": null,
+      "vk": null,
+      "mp4": null
+    },
     "photos": [],
     "testimonialId": null,
     "extra": []
@@ -104,7 +124,12 @@
     ],
     "result": "Формат подходит для продвижения загородных домов, коттеджей и других объектов недвижимости в соцсетях и объявлениях — без изменения архитектуры, выдуманного ремонта и добавления несуществующих объектов.",
     "price": "2 500 ₽",
-    "video": "https://youtu.be/TOEYNuJyd-A",
+    "video": {
+      "youtube": "https://youtu.be/TOEYNuJyd-A",
+      "rutube": null,
+      "vk": null,
+      "mp4": null
+    },
     "photos": [],
     "testimonialId": "testimonial-3",
     "extra": []
@@ -123,7 +148,12 @@
     ],
     "result": "Из довольно слабого исходника получился полноценный динамичный видеообзор квартиры, который уже можно использовать для продвижения объекта.",
     "price": null,
-    "video": "https://youtu.be/vpMCllrSdTg",
+    "video": {
+      "youtube": "https://youtu.be/vpMCllrSdTg",
+      "rutube": null,
+      "vk": null,
+      "mp4": null
+    },
     "photos": [
       "/Photo/case-2/1.webp",
       "/Photo/case-2/2.webp",
@@ -149,7 +179,12 @@
     ],
     "result": "Из обычных фотографий квартиры получился готовый вертикальный видеоролик, который можно использовать в объявлении для более наглядной презентации объекта.",
     "price": null,
-    "video": "https://youtu.be/u2gvhTMY_UA",
+    "video": {
+      "youtube": "https://youtu.be/u2gvhTMY_UA",
+      "rutube": null,
+      "vk": null,
+      "mp4": null
+    },
     "photos": [],
     "testimonialId": "testimonial-1",
     "extra": []

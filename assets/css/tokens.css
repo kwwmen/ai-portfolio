@@ -8,14 +8,14 @@
   --c-bg:            #F7F6F3;
   --c-bg-alt:        #F1EFEB;
   --c-surface:       #FFFFFF;
-  --c-border:        #E7E4DE;
+  --c-border:        #DEDAD3;
   --c-border-strong: #D2CDC4;
   --c-text:          #171614;
   --c-text-muted:    #6E6A63;
-  --c-text-faint:    #9C968C;
+  --c-text-faint:    #6E6A63;
   --c-accent:        #9A5B33;
   --c-accent-soft:   rgba(154, 91, 51, 0.10);
-  --c-focus:         #171614;
+  --c-focus:         #9A5B33;
   --c-overlay:       rgba(20, 19, 17, 0.52);
 
   /* ── Шрифты ────────────────────────────────────────────── */
@@ -27,7 +27,7 @@
                "Liberation Mono", monospace;
 
   /* ── Размеры текста ───────────────────────────────────── */
-  --fs-xs:   0.6875rem;
+  --fs-xs:   0.75rem;
   --fs-sm:   0.8125rem;
   --fs-base: 1rem;
   --fs-lg:   1.125rem;
@@ -75,4 +75,18 @@
   --ease-out:    cubic-bezier(0.16, 1, 0.3, 1);
   --ease-soft:   cubic-bezier(0.4, 0, 0.2, 1);
   --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+
+  /* ── Дополнительные шаги ритма ─────────────────────────── */
+  --sp-7:  1.75rem;
+
+  /* ── Радиусы ───────────────────────────────────────────── */
+  --radius-lg: 10px;
+  --radius-xl: 14px;
+
+  /* ── Свечение акцента ──────────────────────────────────── */
+  --glow-accent: 0 0 0 1px rgba(154, 91, 51, 0.14),
+                 0 18px 40px -20px rgba(154, 91, 51, 0.42);
+
+  /* ── Задержка каскада (переопределяется из JS) ─────────── */
+  --reveal-delay: 0ms;
 }

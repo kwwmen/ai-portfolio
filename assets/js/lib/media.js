@@ -4,18 +4,29 @@ const cache = new Map();
 
 /**
  * Превращает значение из JSON в URL для <img src>.
- * Принимает абсолютный https-URL или путь вида /Photo/case-1/a.jpg
+ *
+ * Поддерживает три формы:
+ *   • https://...          — используется как есть
+ *   • assets/...  или  ./… — путь от корня сайта, без преобразований
+ *   • /Photo/case-1/a.jpg  — локальное хранилище (assets/img/cases/…)
+ *                            либо Яндекс Диск, если mediaSource: 'yandex'
  */
 export async function resolveImage(path) {
   if (!path) return null;
-  if (/^https?:\/\//i.test(path)) return path;
+
+  const raw = String(path).trim();
+
+  if (/^https?:\/\//i.test(raw)) return raw;
+
+  /* Прямой путь от корня сайта — не трогаем */
+  if (/^(assets\/|\.\/)/i.test(raw)) return raw.replace(/^\.\//, '');
 
   if (CONFIG.mediaSource === 'yandex') {
-    return resolveYandex(path);
+    return resolveYandex(raw);
   }
 
   /* local: /Photo/case-1/a.jpg → assets/img/cases/case-1/a.jpg */
-  const normalized = String(path)
+  const normalized = raw
     .replace(/^\/?Photo\//i, '')
     .replace(/^\//, '');
 
@@ -92,6 +103,73 @@ export function youTubeEmbedUrl(id) {
 }
 
 /** Прямая ссылка на ролик — для кнопки «Открыть на YouTube» */
+/* ── VK Видео ────────────────────────────────────── */
+
+/**
+ * Достаёт идентификатор VK-видео.
+ * Понимает все встречающиеся формы:
+ *   https://vk.com/video-123456_789012
+ *   https://vkvideo.ru/video-123456_789012
+ *   https://vk.com/video_ext.php?oid=-123456&id=789012
+ * @returns {string|null} строка вида "-123456_789012"
+ */
+export function parseVkId(input) {
+  if (!input) return null;
+
+  const s = String(input).trim();
+
+  /* Уже готовый идентификатор */
+  if (/^-?\d+_\d+$/.test(s)) return s;
+
+  /* video_ext.php?oid=...&id=... */
+  const ext = s.match(/[?&]oid=(-?\d+)[^#]*?[?&]id=(\d+)/);
+  if (ext) return `${ext[1]}_${ext[2]}`;
+
+  /* Любая ссылка с video<oid>_<id> */
+  const m = s.match(/video(-?\d+)_(\d+)/);
+  if (m) return `${m[1]}_${m[2]}`;
+
+  return null;
+}
+
+export function vkEmbedUrl(vkId) {
+  const [oid, id] = String(vkId).split('_');
+  const params = new URLSearchParams({
+    oid,
+    id,
+    hd: '2',
+    autoplay: '1'
+  });
+  return `https://vk.com/video_ext.php?${params}`;
+}
+
+/** Прямая ссылка на страницу ролика — для ссылки «открыть» */
+export function vkWatchUrl(vkId) {
+  return `https://vk.com/video${vkId}`;
+}
+
+/* ── RuTube ──────────────────────────────────────── */
+
+/**
+ * Достаёт идентификатор RuTube.
+ *   https://rutube.ru/video/abcdef1234567890/
+ *   https://rutube.ru/play/embed/abcdef1234567890
+ * @returns {string|null}
+ */
+export function parseRutubeId(input) {
+  if (!input) return null;
+
+  const s = String(input).trim();
+  if (/^[a-f0-9]{32}$/i.test(s)) return s;
+
+  const m = s.match(/rutube\.ru\/(?:video|play\/embed)\/([a-f0-9]{32})/i);
+  return m ? m[1] : null;
+}
+
+export function rutubeEmbedUrl(rtId) {
+  return `https://rutube.ru/play/embed/${rtId}`;
+}
+
 export function youTubeWatchUrl(id) {
   return `https://youtu.be/${id}`;
 }
