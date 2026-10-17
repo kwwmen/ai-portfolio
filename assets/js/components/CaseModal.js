@@ -86,7 +86,11 @@ export function CaseModal(modalEl, testimonials, lightbox, galleryFactory) {
 
     /* Состав работы вместо номера кейса */
     const parts = [];
-    if (c.video) parts.push('Видео');
+    const videoCount = Array.isArray(c.videos) && c.videos.length > 0
+      ? c.videos.length
+      : (c.video ? 1 : 0);
+    if (videoCount === 1) parts.push('Видео');
+    else if (videoCount > 1) parts.push(`${videoCount} видео`);
     if (Array.isArray(c.photos) && c.photos.length > 0) {
       parts.push(`${c.photos.length} фото`);
     }
@@ -99,7 +103,32 @@ export function CaseModal(modalEl, testimonials, lightbox, galleryFactory) {
     const h2 = el('h2', 'modal__title', c.title);
     panel.appendChild(h2);
 
-    if (c.video) {
+    /* Один ролик — как раньше. Несколько — каждый со своей подписью */
+    if (Array.isArray(c.videos) && c.videos.length > 0) {
+      const block = el('div', 'modal__block');
+      block.appendChild(el('p', 'modal__label', 'Видео'));
+
+      c.videos.forEach((v, i) => {
+        const item = el('div', 'modal__video-item');
+
+        const head = el('div', 'modal__video-head');
+        head.appendChild(el('span', 'modal__video-title', v.label || `Ролик ${i + 1}`));
+        if (v.price) head.appendChild(el('span', 'modal__video-price', v.price));
+        item.appendChild(head);
+
+        if (v.note) {
+          item.appendChild(el('p', 'modal__video-note', v.note));
+        }
+
+        item.appendChild(
+          VideoPlayer(v, `${c.title} — ${v.label || 'видео'}`, { eager: i === 0 })
+        );
+
+        block.appendChild(item);
+      });
+
+      panel.appendChild(block);
+    } else if (c.video) {
       const media = el('div', 'modal__media');
       media.appendChild(VideoPlayer(c.video, c.title, { eager: true }));
       panel.appendChild(media);
